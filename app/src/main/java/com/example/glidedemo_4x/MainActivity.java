@@ -2,6 +2,7 @@ package com.example.glidedemo_4x;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
+import com.example.glidedemo_4x.test1.TestActivity1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,10 +30,21 @@ public class MainActivity extends AppCompatActivity {
         Utils.log("MainActivity onTest1");
 //        Glide.with(this).load(mUrl).into(imgvTest);
         Glide.with(this)
+//                .asBitmap()
                 .load(mUrl1)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(imgvTest);
     }
+
+    /**
+     * 自定义ModelLoader
+     */
+    public void onTest2(View v) {
+        startActivity(new Intent(this, TestActivity1.class));
+
+    }
+
+
 }
