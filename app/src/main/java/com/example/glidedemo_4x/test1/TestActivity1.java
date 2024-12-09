@@ -13,6 +13,11 @@ import com.bumptech.glide.request.target.Target;
 import com.example.glidedemo_4x.R;
 import com.example.glidedemo_4x.Utils;
 
+/**
+ * 自定义ModelLoader
+ * 文档：
+ * https://www.bookstack.cn/read/glide-docs-cn/17.md
+ */
 public class TestActivity1 extends AppCompatActivity {
   private static final String DATA_URI =
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZ"

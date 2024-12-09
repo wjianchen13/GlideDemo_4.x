@@ -324,7 +324,7 @@ DecodePath#decodeResourceWithList()
 最后调用的哦EngineJog的onResourceReady
 然后通过线程池运行CallResourceReady
 entry.executor.execute(new CallResourceReady(entry.cb));
-executorzai Engine 创建一个engineJob的时候会通过下面方法添加进来
+executor在 Engine 创建一个engineJob的时候会通过下面方法添加进来
 engineJob.addCallback(cb, callbackExecutor);
 在Engine的第225行的waitForExistingOrStartNewJob
 而Engine的这个callbackExecutor则是从SingleRequest哪里传来的，SingleRequest第206行
@@ -346,12 +346,45 @@ target.onResourceReady(result, animation);
 然后调用setResource()方法
 最后回调到DrawableImageViewTarget的setResource()方法
 
+glide 缓存
+从Engine 第155行的load()方法开始
+第177行生成一个key
+EngineKey key = keyFactory.buildKey()
+Glide内存缓存的实现采取的是方案是：LruCache算法+弱引用机制
+第190行，调用loadFromMemory()方法从内存缓存中查找图片
+在loadFromMemory()内部，
+第298行，判断是否开启了内存缓存，如果没有开启，直接返回null
+第302行，从活动缓存中调用loadFromActiveResources()方法查找缓存，如果找到了直接返回EngineResource实例
+如果没找到，第310行调用loadFromCache()方法从内存缓存中查找，找到了就直接返回，否则返回null
+如果内存缓存中查找到图片资源，将图片从cache中移除，并且添加到正在使用的图片缓存activeResources
+添加到活动缓存的逻辑在第339行。
+内存缓存是使用LinkedHashMap进行缓存的，在MemoryCache类中，其中cache是LruResourceCache的一个实例，这个在
+GlideBuilder第542进行实例化。
+活动缓存在这个类里面实现ActiveResources
+把正在使用的图片对象的弱引用添加到HashMap：activeEngineResources中，使用弱引用是因为持有图片对象的Activity或
+Fragment有可能会被销毁，这样做可以及时清除缓存并释放内存，防止内存泄漏。
+内存缓存功能小结：
+读取缓存的顺序是：正在使用的图片缓存 > 内存缓存 > 磁盘缓存
+缓存正在使用的图片采取HashMap+弱引用，而内存缓存使用LinkedHashMap
 
+缓存写入
+是在DecodeJob的decodeFromRetrievedData()方法开始
+最后回调到Engine中的第371行的onEngineJobComplete()方法
+在这里会调用下面的方法把他缓存到活动缓存
+activeResources.activate(key, resource);
+接着回调
+entry.executor.execute(new CallResourceReady(entry.cb));
+最后会回调到SingleRequest的第542行的onResourceReady()方法
+在这个方法最后，调用了
+engine.release(toRelease);
+如果图片资源被标记为需要释放，会调用engine.release(toRelease)释放图片资源
+接着调用EngineResource第361行代码
+接着调用EngineResource的第105行的release()方法
+在该方法内部，acquired变量用于计算图片资源被引用的次数，acquired==0表示该图片资源可以被回收，在Engine的onResourceReleased()方法中实现资源回收
+然后回调到Engine第394行onResourceReleased()方法，在该方法内部进行了内存缓存的存储
 
-
-
-
-
+磁盘缓存
+磁盘缓存是从DataCacheGenerator 的 startNext()方法开始的，
 
 
 
