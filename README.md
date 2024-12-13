@@ -88,3 +88,5 @@ https://blog.csdn.net/u013347784/article/details/125728996
 Glide 文档中文翻译
 https://www.bookstack.cn/read/glide-docs-cn/17.md
 
+Glide 4.9.0缓存机制探索
+https://www.cnblogs.com/laserenet/p/15891573.html

@@ -384,7 +384,51 @@ engine.release(toRelease);
 然后回调到Engine第394行onResourceReleased()方法，在该方法内部进行了内存缓存的存储
 
 磁盘缓存
-磁盘缓存是从DataCacheGenerator 的 startNext()方法开始的，
+缓存表示
+缓存表示	说明
+DiskCacheStrategy.NONE	表示不开启磁盘缓存
+DiskCacheStrategy.RESOURCE	表示只缓存转换之后的图片。
+DiskCacheStrategy.ALL	表示既缓存原始图片，也缓存转换过后的图片。
+DiskCacheStrategy.DATA	表示只缓存原始图片
+DiskCacheStrategy.AUTOMATIC	根据数据源自动选择磁盘缓存策略（默认选择）
+磁盘缓存是从DecodeJob 的 runWrapped()方法开始的，如果设置了diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+进入runWrapped()之后，首先满足第一个条件INITIALIZE，调用getNextStage()方法
+在getNextStage()内部，一次匹配的stage的顺序是：
+RESOURCE_CACHE->DATA_CACHE->SOURCE->FINISHED
+在这个方法内部有个标志
+仅从缓存中检索onlyRetrieveFromCache，它表示仅从缓存中检索
+上面的Stage分别表示：
+RESOURCE_CACHE:转换之后的缓存
+DATA_CACHE:原始缓存
+SOURCE:网络缓存
+FINISHED:完成
+接着调用getNextGenerator()方法，在这个方法内部，实例化的DataFetcherGenerator对应关系如下：
+RESOURCE_CACHE->ResourceCacheGenerator 解码后的资源执行器
+DATA_CACHE->DataCacheGenerator 原始数据执行器
+SOURCE->SourceGenerator 新的请求，http执行器
+如果设置了diskCacheStrategy(DiskCacheStrategy.RESOURCE)，那runWrapped()方法内部实例化的就是ResourceCacheGenerator
+接着进入到ResourceCacheGenerator的runGenerators()方法，
+RequestBuilder传入的transcodeClass如下：
+class android.graphics.drawable.Drawable
+第1234行SingleRequest.obtain()传入的第5个参数就是上面的transcodeClass
+SingleRequest第468行传入了transcodeClass
+DecodeJob上面的泛型参数R=class android.graphics.drawable.Drawable
+所以DecodeJob的DecodeHelper R也和上面一样
+ResourceCacheGenerator传入的DecodeHelper的实例泛型就是Drawable
+resourceClass 是在BaseRequestOptions第93行定义的Object
+接着进入Registry第535的getRegisteredResourceClasses()方法，
+从这个缓存中取数据modelToResourceClassCache
+从名字看就是model转成资源类的缓存
+首次取拿就返回null，所以接下来进入到第544行，
+最后调用MultiModelLoaderFactory第117行的getDataClasses()方法
+在这个方法会添加String.class对应的dataClass，因为这里有判断，所以不包括重复的InputStream.class数据
+这里有3条
+List(InputStream.class, ParcelFileDescriptor.class, AssetFileDescriptor.class)
+
+
+
+
+
 
 
 
