@@ -1,3 +1,9 @@
+modelClass 输入原始模型 比如Url, 文件路径
+dataClass 数据类 比如InputStream， FileDescriptor
+resourceClass 被解码后的资源，比如Bitmap， GiftDrawable
+transcodeClass 被转码后的资源类，比如Byte[], BitmapDrawable
+
+
 modelLoaderRegistry保存的数据，按照顺序
 .append(Bitmap.class, Bitmap.class, UnitModelLoader.Factory.<Bitmap>getInstance())
 .append(GifDecoder.class, GifDecoder.class, UnitModelLoader.Factory.<GifDecoder>getInstance())
@@ -391,6 +397,7 @@ DiskCacheStrategy.RESOURCE	表示只缓存转换之后的图片。
 DiskCacheStrategy.ALL	表示既缓存原始图片，也缓存转换过后的图片。
 DiskCacheStrategy.DATA	表示只缓存原始图片
 DiskCacheStrategy.AUTOMATIC	根据数据源自动选择磁盘缓存策略（默认选择）
+
 磁盘缓存是从DecodeJob 的 runWrapped()方法开始的，如果设置了diskCacheStrategy(DiskCacheStrategy.RESOURCE)
 进入runWrapped()之后，首先满足第一个条件INITIALIZE，调用getNextStage()方法
 在getNextStage()内部，一次匹配的stage的顺序是：
@@ -406,8 +413,9 @@ FINISHED:完成
 RESOURCE_CACHE->ResourceCacheGenerator 解码后的资源执行器
 DATA_CACHE->DataCacheGenerator 原始数据执行器
 SOURCE->SourceGenerator 新的请求，http执行器
+
 如果设置了diskCacheStrategy(DiskCacheStrategy.RESOURCE)，那runWrapped()方法内部实例化的就是ResourceCacheGenerator
-接着进入到ResourceCacheGenerator的runGenerators()方法，
+接着进入到ResourceCacheGenerator的startNext()方法，
 RequestBuilder传入的transcodeClass如下：
 class android.graphics.drawable.Drawable
 第1234行SingleRequest.obtain()传入的第5个参数就是上面的transcodeClass
@@ -416,26 +424,187 @@ DecodeJob上面的泛型参数R=class android.graphics.drawable.Drawable
 所以DecodeJob的DecodeHelper R也和上面一样
 ResourceCacheGenerator传入的DecodeHelper的实例泛型就是Drawable
 resourceClass 是在BaseRequestOptions第93行定义的Object
-接着进入Registry第535的getRegisteredResourceClasses()方法，
-从这个缓存中取数据modelToResourceClassCache
+
+在ResourceCacheGenerator第51行会调用helper.getRegisteredResourceClasses()
+传入的参数：
+modelClass = class java.lang.String
+resourceClass = class java.lang.Object
+transcodeClass = class android.graphics.drawable.Drawable
+
+modelClass: 源数据初始模型，例如传入的是字符串
+resourceClass:目标数据类型
+transcodeClass：转换成目标数据类型使用类的类型
+
+接着进入Registry第535的getRegisteredResourceClasses()方法
+这个方法首先从modelLoaderRegistry拿到所有java.lang.String对应的dataClass，并存放到dataClasses中，它主要包含
+以下数据：
+class java.io.InputStream
+class android.os.ParcelFileDescriptor
+class android.content.res.AssetFileDescriptor
+
+调用decoderRegistry.getResourceClasses()方法获取上面dataClasses和java.lang.Object对应的decoder class集合
+dataClasses等于上面数据集合，resourceClass=java.lang.Object的所有decoder class集合
+当满足条件ResourceDecoderRegistry里面的Entry的dataClass 是传入dataClasses子类或者和dataClasses相等
+并且ResourceDecoderRegistry里面的Entry的resourceClass是传入resourceClass子类或者和resourceClass相等
+并且缓存不存在的时候，就添加对应的decoder到List中，说明这个List不会添加2个 一模一样的decoder
+存放到registeredResourceClasses，这里面把符合条件对应的resourceClass查找出来了，
+
+调用transcoderRegistry.getTranscodeClasses()方法，在这个方法内部，当传入的参数resourceClass是transcodeClass
+的父类或者resourceClass等于transcodeClass，会把对应的resourceClass直接添加到返回列表，并直接返回
+否则会从transcoders便利，当满足条件传入的fromClass等于Entry的fromClass或者传入的fromClass是
+Entry的fromClass的父类并且传入的toClass等于Entry的toClass或者Entry的toClass是传入toClass的父类，
+也会把满足条件的Entry的toClass添加到返回列表中，然后Registry中第549行registeredTranscodeClasses接收返回值。
+
+然后回到Registry第551行，判断返回的registeredTranscodeClasses如果不为空并且result没有添加registeredResourceClass
+就把registeredResourceClass添加到result中。
+
+第539行从这个缓存中取数据modelToResourceClassCache
 从名字看就是model转成资源类的缓存
-首次取拿就返回null，所以接下来进入到第544行，
+首次取那就返回null，所以接下来进入到第544行，
 最后调用MultiModelLoaderFactory第117行的getDataClasses()方法
 在这个方法会添加String.class对应的dataClass，因为这里有判断，所以不包括重复的InputStream.class数据
-这里有3条
-List(InputStream.class, ParcelFileDescriptor.class, AssetFileDescriptor.class)
+dataClasses这里有3条
+class java.io.InputStream
+class android.os.ParcelFileDescriptor
+class android.content.res.AssetFileDescriptor
+
+Registry第544行的List<Class<?>> dataClasses列表装的就是上面3条数据
+接着第547行调用了ResourceDecoderRegistry的getResourceClasses()方法
+
+decoderRegistry: 解码器注册
+transcoderRegistry: 转码器注册
+
+所以decoders的值在上面，decoders的值有以下这些：
+
+在getResourceClasses()方法里面
+
+ResourceDecodeRegistry的getResourceClasses()传入的参数是：
+dataClass = class java.nio.ByteBuffer
+resourceClass = class java.lang.Object
 
 
+就是从上面的decoders要查找所有符合entry的dataClass是dataClass的子类，并且
+entry的resourceClass是resourceClass的子类的集合。
+然后把resourceClass加入到List
+第一步
+legacy_prepend_all 没有对应的decoder
+第二步
+Animation 找到Animation列表对应的1
+class com.bumptech.glide.load.resource.gif.GifDrawable
+第三步
+Bitmap 找到
+class android.graphics.Bitmap
+第四步
+BitmapDrawable 找到
+class android.graphics.drawable.BitmapDrawable
+第五步
+legacy_append 找到
+class android.graphics.Bitmap
+class android.graphics.drawable.BitmapDrawable
 
+所以最后
+ResourceDecodeRegistry的getResourceClasses()返回的list如下
+class com.bumptech.glide.load.resource.gif.GifDrawable
+class android.graphics.Bitmap
+class android.graphics.drawable.BitmapDrawable
 
+所以回到Registry中的535行getRegisteredResourceClasses()方法
+传入的参数：
+modelClass = class java.lang.String
+resourceClass = class java.lang.Object
+transcodeClass = class android.graphics.drawable.Drawable
 
+第548行第一次获取到的List数据就是上面的3条
+然后进入内循环，第550进入TranscoderRegistry 里面的getTranscodeClasses()方法
+在这个方法内部 transcoders有下面的值
+0={TranscoderRegistry$Entry@26666}
+    fromClass="class android.graphics.Bitmap"
+    toClass="class android.graphics.drawable.BitmapDrawable"
+    transcoder={BitmapDrawableTranscoder}
+1={TranscoderRegistry$Entry@26666}
+    fromClass="class android.graphics.Bitmap"
+    toClass="class [B"
+    transcoder={BitmapBytesTranscoder}
+2={TranscoderRegistry$Entry@26666}
+    fromClass="class android.graphics.drawable.Drawable"
+    toClass="class [B"
+    transcoder={DrawableBytesTranscoder}
+3={TranscoderRegistry$Entry@26666}
+    fromClass="class com.bumptech.glide.load.resource.gif.GifDrawable"
+    toClass="class [B"
+    transcoder={GifDrawableBytesTranscoder}
 
+在TranscoderRegistry中的getTranscodeClasses()方法
+第一步，传入
+resourceClass = class com.bumptech.glide.load.resource.gif.GifDrawable
+transcodeClass = class android.graphics.drawable.Drawable
+满足条件transcodeClass.isAssignableFrom(resourceClass)
+就直接添加class android.graphics.drawable.Drawable到List里面
+第二步
+传入
+resourceClass = class android.graphics.Bitmap
+transcodeClass = class android.graphics.drawable.Drawable
+不满足条件transcodeClass.isAssignableFrom(resourceClass)
+所以进入73行的for循环
+它满足条件transcoders[0].fromClass.isAssignableFrom(class android.graphics.Bitmap)
+所以添加到列表中
+transcoders[0].toClass = class android.graphics.drawable.BitmapDrawable
+第三步
+传入
+resourceClass = class android.graphics.drawable.BitmapDrawable
+transcodeClass = class android.graphics.drawable.Drawable
+满足transcodeClass.isAssignableFrom(resourceClass)
+添加到列表中：
+class android.graphics.drawable.Drawable
 
+这样一轮循环结束之后，最后result列表中的数据如下
+class com.bumptech.glide.load.resource.gif.GifDrawable
+class android.graphics.Bitmap
+class android.graphics.drawable.BitmapDrawable
+然后第556行调用modelToResourceClassCache的put方法把数据添加到缓存，缓存的key是
+new MultiClassKey(modelClass, resourceClass, transcodeClass)
+在这个方法内部，key应该是判断上面参数相等就认为是同一个的
+然后返回到ResourceCacheGenerator的第52行方法中
 
+下面的意思应该是，数据输入是dataClass经过decoder之后，转成了resourceClass类型的东西
+dataClass="class android.os.ParcelFileDescriptor"
+decoder={VideoDecoder}
+resourceClass="class android.graphics.Bitmap"
 
+然后回到ResourceCacheGenerator第51行
+接着到第62行while语句，首先modelLoaders == null，所以进入该循环，这里总结一句话就是如果modelLoaders
+里面有内容就会跳过这个循环，如果为空就从这个循环里面找到对应的modelLoaders
+拿到第一条数据com.bumptech.glide.load.resource.gif.GifDrawable，然后到第88行cacheFile = null
+所以进行下一轮循环，拿到android.graphics.Bitmap，然后到第88行cacheFile == null
+如果没有缓存，所有循环进行之后，会在第67行返回false。
 
+在DecodeJob下面这个方法,就是判断是否有缓存，然后决定是否从网络加载数据的Generator
+private DataFetcherGenerator getNextGenerator() {
+    switch (stage) {
+        case RESOURCE_CACHE:
+            return new ResourceCacheGenerator(decodeHelper, this);
+        case DATA_CACHE:
+            return new DataCacheGenerator(decodeHelper, this);
+        case SOURCE:
+            return new SourceGenerator(decodeHelper, this);
+        case FINISHED:
+            return null;
+        default:
+            throw new IllegalStateException("Unrecognized stage: " + stage);
+    }
+}
+ResourceCacheGenerator 应该是磁盘缓存RESOURCE
+DataCacheGenerator 磁盘缓存DATA
+SourceGenerator 从网络获取数据
 
+当设置了DiskCacheStrategy.RESOURCE时，首先会从ResourceCacheGenerator查找缓存
+如果存在的话，最后会调用第105行的loadData()方法，这个fetcher是ByteBufferFileLoader的
+ByteBufferFetcher类型。查到之后，会回调callback的onDataReady()方法。
+然后回调DecodeJob第379行的onDataFetcherReady()方法。
 
+dataClass:源数据类型
+resourceClass:目标数据类型
+transcodeClass：转换成目标数据类型使用类的类型
 
 
 
