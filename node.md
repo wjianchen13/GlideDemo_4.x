@@ -561,6 +561,7 @@ class android.graphics.drawable.Drawable
 class com.bumptech.glide.load.resource.gif.GifDrawable
 class android.graphics.Bitmap
 class android.graphics.drawable.BitmapDrawable
+
 然后第556行调用modelToResourceClassCache的put方法把数据添加到缓存，缓存的key是
 new MultiClassKey(modelClass, resourceClass, transcodeClass)
 在这个方法内部，key应该是判断上面参数相等就认为是同一个的
@@ -577,6 +578,44 @@ resourceClass="class android.graphics.Bitmap"
 拿到第一条数据com.bumptech.glide.load.resource.gif.GifDrawable，然后到第88行cacheFile = null
 所以进行下一轮循环，拿到android.graphics.Bitmap，然后到第88行cacheFile == null
 如果没有缓存，所有循环进行之后，会在第67行返回false。
+
+在第74行调用了helper.getTransformation(resourceClass)，它会从DecodeHelper中的transformations查找对应的
+Transformation。
+这个Transformation的初始化流程如下：
+RequestBuilder 第839行into()方法开始，调用到第860行的下面方法
+requestOptions = requestOptions.clone().optionalFitCenter();
+然后调用到GlideRequest类中第321行的optionalFitCenter()方法，
+然后调用BaseRequestOptions类中的第738行方法
+调用BaseRequestOptions类第856行optionalScaleOnlyTransform()方法
+调用BaseRequestOptions类第864行scaleOnlyTransform()方法
+调用BaseRequestOptions类第822行optionalTransform()方法
+调用BaseRequestOptions类第964行transform()方法
+在这个方法内部加入了4个transform
+代码如下
+DrawableTransformation drawableTransformation = new DrawableTransformation(transformation, isRequired);
+transform(Bitmap.class, new FitCenter(), isRequired);
+transform(Drawable.class, drawableTransformation, isRequired);
+transform(BitmapDrawable.class, drawableTransformation.asBitmapDrawable(), isRequired);
+transform(GifDrawable.class, new GifDrawableTransformation(transformation), isRequired);
+
+然后从上面的拿到resourceClass在这个transformations获取对应的Transformation，这个Transformation只是用来生成
+磁盘缓存的Key，然后从磁盘缓存中获取cacheFile，然后从cacheFile获取对应的modelLoader。
+在第91行，helper.getModelLoaders(cacheFile)最终会调用到ModelLoaderRegistry第74行的getModelLoaders()方法，
+第75行获取的modelLoaders有4个
+ByteBufferFileLoader
+FileLoader
+FileLoader
+UnitModelLoader
+最后返回的filteredLoaders也是上面4个值。
+第103行helper.hasLoadPath()会对实例化LoadPath，并把dataClass，resourceClass和transcodeClass作为参数传入
+缓存起来，最后缓存到Registry中的loadPathCache变量，然后返回对应的LoadPath对象。然后ResourceCacheGenerator
+第103行会判断这个LoadPath对象是否为空，不为空就进入条件内部。
+
+
+
+
+当modelLoaders不为空之后，会进入第98行的while()循环，
+
 
 在DecodeJob下面这个方法,就是判断是否有缓存，然后决定是否从网络加载数据的Generator
 private DataFetcherGenerator getNextGenerator() {
