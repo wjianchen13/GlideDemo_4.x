@@ -17,6 +17,7 @@ import com.example.glidedemo_4x.Utils;
  * 自定义ModelLoader
  * 文档：
  * https://www.bookstack.cn/read/glide-docs-cn/17.md
+ * 需要在MyAppGlideModule打开配置
  */
 public class TestActivity1 extends AppCompatActivity {
   private static final String DATA_URI =

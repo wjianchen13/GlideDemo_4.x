@@ -13,6 +13,6 @@ import java.nio.ByteBuffer;
 public class MyAppGlideModule extends AppGlideModule {
   @Override
   public void registerComponents(Context context, Glide glide, Registry registry) {
-//    registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
+    registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
   }
 }

@@ -108,9 +108,6 @@ SourceGenerator
 while (!started && hasNextModelLoader()) {
 hasNextModelLoader()
 
-DecodeHelper
-getLoadData()
-
 .append(String.class, InputStream.class, new DataUrlLoader.StreamFactory<String>())
 .append(String.class, InputStream.class, new StringLoader.StreamFactory())
 .append(String.class, ParcelFileDescriptor.class, new StringLoader.FileDescriptorFactory())
@@ -118,44 +115,48 @@ getLoadData()
 
 new DataUrlLoader()
 
-
 ModelLoaderCache里面的结构如下
 Map<Class<?>, Entry<?>>
 其中Entry结构如下
 List<ModelLoader<Model, ?>>
 
-DecodeHelper调用getModelLoaders()最终会进入到ModelLoaderRegistry第74行的getModelLoaders(@NonNull A model)
+DecodeHelper第212行调用getModelLoaders()最终会进入到ModelLoaderRegistry第74行的getModelLoaders(@NonNull A model)
 接着调用第110行的getModelLoadersForClass()方法
 第一次进入cache是拿不到数据的，所以会调用multiModelLoaderFactory.build(modelClass)创建和String有关的ModerLoader
 进入MultiModelLoaderFactory的第91行的build方法
 Entry的结构如下：
 private static class Entry<Model, Data> {
-private final Class<Model> modelClass;
-@Synthetic final Class<Data> dataClass;
-@Synthetic final ModelLoaderFactory<? extends Model, ? extends Data> factory;
-分别对应了注册的下面参数
+    private final Class<Model> modelClass;
+    @Synthetic final Class<Data> dataClass;
+    @Synthetic final ModelLoaderFactory<? extends Model, ? extends Data> factory;
+}
+Entry分别对应了注册的下面参数
 .append(String.class, AssetFileDescriptor.class, new StringLoader.AssetFileDescriptorFactory())
+
 他会从entries这个list里面循环查找，然后调用handles方法判断是否满足modelClass的条件，当是String参数的时候，找到满足条件如
 .append(String.class, InputStream.class, new DataUrlLoader.StreamFactory<String>())
 .append(String.class, InputStream.class, new StringLoader.StreamFactory())
 .append(String.class, ParcelFileDescriptor.class, new StringLoader.FileDescriptorFactory())
 .append(String.class, AssetFileDescriptor.class, new StringLoader.AssetFileDescriptorFactory())
+
 第一个找到满足条件的是:
 .append(String.class, InputStream.class, new DataUrlLoader.StreamFactory<String>())
 然后会调用DataUrlLoader.StreamFactory的build方法创建一个ModelLoader实例，添加到loaders这个列表中
 创建的实例是DataUrlLoader<Model, InputStream>
 public ModelLoader<Model, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
-return new DataUrlLoader<>(opener);
+    return new DataUrlLoader<>(opener);
 }
+
 接下来找到
 .append(String.class, InputStream.class, new StringLoader.StreamFactory())
 然后会调用 StringLoader的build方法，最后会调用到StringLoader.StreamFactory的build方法
 public ModelLoader<String, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
-return new StringLoader<>(multiFactory.build(Uri.class, InputStream.class));
+    return new StringLoader<>(multiFactory.build(Uri.class, InputStream.class));
 }
+
 这里又会调用MultiModelLoaderFactory第128行的buid方法
 public synchronized <Model, Data> ModelLoader<Model, Data> build(
-@NonNull Class<Model> modelClass, @NonNull Class<Data> dataClass)
+    @NonNull Class<Model> modelClass, @NonNull Class<Data> dataClass)
 传入的参数是：
 (multiFactory.build(Uri.class, InputStream.class)
 接下来还是从entries循环查找满足上面2个参数条件的entry，然后调用entry.factory.build()方法创建ModelLoader
@@ -190,9 +191,9 @@ public synchronized <Model, Data> ModelLoader<Model, Data> build(
 会调用UrlUriLoader.StreamFactory的build创建一个UrlUriLoader<Uri, InputStream.class>
 最后，回到MultiModelLoaderFactory第128行的build()方法，把上面创建好的ModelLoader都放到一个list里面
 loaders.add(this.<Model, Data>build(entry));
-如果上面创建的ModelLoader数量大于1，还会调用下面方法
+如果上面创建的ModelLoader数量大于1，还会调用下面方法包装成MultiModelLoader
 factory.build(loaders, throwableListPool)
-包装成MultiModelLoader，
+如果数量等于1，就直接返回这个列表中的第一个ModelLoader实例
 
 接下来找到：
 .append(String.class, ParcelFileDescriptor.class, new StringLoader.FileDescriptorFactory())
@@ -227,22 +228,23 @@ factory.build(loaders, throwableListPool)
 综合上面，MultiModelLoaderFactory第91行最后返回的数据结构如下
 DataUrlLoader<String, InputStream>
 StringLoader<String, InputStream>
-MultiModelLoader<String, InputStream>->List
-DataUrlLoader<Uri, InputStream.class>
-AssetUriLoader<Uri, InputStream.class>
-MediaStoreImageThumbLoader<Uri, InputStream.class>
-MediaStoreVideoThumbLoader<Uri, InputStream.class>
-QMediaStoreUriLoader<Uri, InputStream.class>
-UriLoader<Uri, InputStream.class>
-UrlUriLoader<Uri, InputStream.class>
+    uriLoader = MultiModelLoader<String, InputStream>->List
+        DataUrlLoader<Uri, InputStream.class>
+        AssetUriLoader<Uri, InputStream.class>
+        MediaStoreImageThumbLoader<Uri, InputStream.class>
+        MediaStoreVideoThumbLoader<Uri, InputStream.class>
+        QMediaStoreUriLoader<Uri, InputStream.class>
+        UriLoader<Uri, InputStream.class>
+        UrlUriLoader<Uri, InputStream.class>
+            urlLoader=HttpGlideUrlLoader<GlideUrl, InputStream>
 StringLoader<String, ParcelFileDescriptor>
-MultiModelLoader<String, InputStream>->List
-QMediaStoreUriLoader<Uri, ParcelFileDescriptor>
-UriLoader<Uri, ParcelFileDescriptor>
+    uriLoader = MultiModelLoader<String, InputStream>->List
+        QMediaStoreUriLoader<Uri, ParcelFileDescriptor>
+        UriLoader<Uri, ParcelFileDescriptor>
 StringLoader<String, AssetFileDescriptor>
-MultiModelLoader<String, InputStream>->List
-AssetUriLoader<Uri, AssetFileDescriptor>
-UriLoader<Uri, AssetFileDescriptor>
+    uriLoader = MultiModelLoader<String, InputStream>->List
+        AssetUriLoader<Uri, AssetFileDescriptor>
+        UriLoader<Uri, AssetFileDescriptor>
 
 然后再ModelLoaderRegistry 的getModelLoaders()方法会对得到的list过滤一遍，通过handles()方法
 过滤之后就只有3个对象了
@@ -254,15 +256,15 @@ DecodeHelper getLoadData() L：208
 通过上面生成的ModelLoader重新生成对应的LoadData对象列表，并返回
 LoadData结构
 class LoadData<Data> {
-public final Key sourceKey;
-public final List<Key> alternateKeys;
-public final DataFetcher<Data> fetcher;
-
+    public final Key sourceKey;
+    public final List<Key> alternateKeys;
+    public final DataFetcher<Data> fetcher;
+}
 
 第一个StringLoader<String, InputStream>，命中UrlUriLoader<Uri, InputStream.class>的handles,
 所以通过MultiModelLoader<String, InputStream>的buildLoadData（）创建LoadData，内部再次调用子ModelLoader
 UrlUriLoader buildLoadData 进行创建LoadData， UrlUriLoader内部又是通过urlLoader的buildLoadData()方法进行创建
-urlLoader是一个HttpGlideUrlLoader类型的实力，因为在创建UrlUriLoader的时候，使用了下面代码创建：
+urlLoader是一个HttpGlideUrlLoader类型的实例，因为在创建UrlUriLoader的时候，使用了下面代码创建：
 public ModelLoader<Uri, InputStream> build(MultiModelLoaderFactory multiFactory) {
 return new UrlUriLoader<>(multiFactory.build(GlideUrl.class, InputStream.class));
 }
