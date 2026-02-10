@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test1"
+            android:onClick="onTest"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test1"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test1"
+            android:onClick="onTest1"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test2"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test2"
+            android:onClick="onTest2"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test3"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test3"
+            android:onClick="onTest3"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test4"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test4"
+            android:onClick="onTest4"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test5"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test5"
+            android:onClick="onTest5"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test6"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test6"
+            android:onClick="onTest6"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test7"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test7"
+            android:onClick="onTest7"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test8"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test8"
+            android:onClick="onTest8"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test9"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test9"
+            android:onClick="onTest9"/>
+
+        <com.opensource.svgaplayer.SVGAImageView
+            android:id="@+id/imgv_test10"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            app:autoPlay="true" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:text="test10"
+            android:onClick="onTest10"/>
+
+    </LinearLayout>
+
+</ScrollView>

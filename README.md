@@ -1,5 +1,8 @@
 # Glide 4.x 源码  
 
+# 注意
+查看源码需要把引入的一些第三方插件注释掉，例如自己实现的加载md5图片，加载webp以及加载svga插件
+
 # 加载流程  
 Glide.with(Activity)  
 Glide.with()

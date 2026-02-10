@@ -8,9 +8,14 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.cache.LruResourceCache;
+import com.bumptech.glide.manager.RequestManagerRetriever;
 import com.bumptech.glide.request.target.Target;
 import com.example.glidedemo_4x.test1.TestActivity1;
+import com.example.glidedemo_4x.webp.WebpActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,8 +48,13 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onTest2(View v) {
         startActivity(new Intent(this, TestActivity1.class));
-
     }
 
+    /**
+     * 测试加载Webp的情况
+     */
+    public void onTest3(View v) {
+        startActivity(new Intent(this, WebpActivity.class));
+    }
 
 }
