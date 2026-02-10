@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -37,8 +37,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-    implementation("com.github.bumptech.glide:glide:4.13.2") // Glide 依赖
-    annotationProcessor("com.github.bumptech.glide:compiler:4.13.2") // Glide 编译器依赖
+    implementation("com.github.bumptech.glide:glide:4.16.0") // Glide 依赖
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0") // Glide 编译器依赖
     implementation("com.github.zjupure:webpdecoder:2.6.4.16.0")
     // SVGAPlayer
     implementation("com.github.yyued:SVGAPlayer-Android:2.6.1")

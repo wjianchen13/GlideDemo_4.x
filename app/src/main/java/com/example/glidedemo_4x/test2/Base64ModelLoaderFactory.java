@@ -1,4 +1,4 @@
-package com.example.glidedemo_4x.test1;
+package com.example.glidedemo_4x.test2;
 
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
