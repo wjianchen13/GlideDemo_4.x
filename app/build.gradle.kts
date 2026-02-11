@@ -39,6 +39,8 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.16.0") // Glide 依赖
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0") // Glide 编译器依赖
+    // libpag
+    implementation("com.tencent.tav:libpag:4.5.27")
     implementation("com.github.zjupure:webpdecoder:2.6.4.16.0")
     // SVGAPlayer
     implementation("com.github.yyued:SVGAPlayer-Android:2.6.1")

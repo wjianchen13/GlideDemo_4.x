@@ -15,6 +15,7 @@ import com.bumptech.glide.manager.RequestManagerRetriever;
 import com.bumptech.glide.request.target.Target;
 import com.example.glidedemo_4x.test1.TestActivity1;
 import com.example.glidedemo_4x.test2.TestActivity2;
+import com.example.glidedemo_4x.test4.TestActivity4;
 import com.example.glidedemo_4x.webp.WebpActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onTest3(View v) {
         startActivity(new Intent(this, WebpActivity.class));
+    }
+
+    /**
+     * Glide自定义解码器加载PAG文件
+     */
+    public void onTest4(View v) {
+        startActivity(new Intent(this, TestActivity4.class));
     }
 
 }

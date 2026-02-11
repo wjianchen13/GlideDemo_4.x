@@ -6,6 +6,9 @@ import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
 import com.example.glidedemo_4x.test2.Base64ModelLoaderFactory;
+import com.example.glidedemo_4x.test4.PAGFileResourceDecoder;
+
+import org.libpag.PAGFile;
 
 import java.nio.ByteBuffer;
 
@@ -14,5 +17,7 @@ public class MyAppGlideModule extends AppGlideModule {
   @Override
   public void registerComponents(Context context, Glide glide, Registry registry) {
     registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
+    // 注册 PAGFile 解码器：ByteBuffer -> PAGFile
+    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder());
   }
 }
