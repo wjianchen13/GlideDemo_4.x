@@ -27,6 +27,7 @@
         <activity android:name=".webp.WebpActivity" />
         <activity android:name=".test2.TestActivity2" />
         <activity android:name=".test4.TestActivity4" />
+        <activity android:name=".test5.TestActivity5" />
 
     </application>
 
