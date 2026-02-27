@@ -37,14 +37,14 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-    implementation("com.github.bumptech.glide:glide:4.16.0") // Glide 依赖
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0") // Glide 编译器依赖
+    implementation("com.github.bumptech.glide:glide:4.13.2") // Glide 依赖
+    annotationProcessor("com.github.bumptech.glide:compiler:4.13.2") // Glide 编译器依赖
     // libpag
     implementation("com.tencent.tav:libpag:4.5.27")
-    implementation("com.github.zjupure:webpdecoder:2.6.4.16.0")
+    implementation("com.github.zjupure:webpdecoder:2.0.4.13.2")
     // SVGAPlayer
-    implementation("com.github.yyued:SVGAPlayer-Android:2.6.1")
+//    implementation("com.github.yyued:SVGAPlayer-Android:2.6.1")
 
     // integration for them
-    implementation("com.github.YvesCheung:SVGAGlidePlugin:4.13.3")
+//    implementation("com.github.YvesCheung:SVGAGlidePlugin:4.13.3")
 }

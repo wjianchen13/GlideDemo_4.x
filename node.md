@@ -634,8 +634,8 @@ private DataFetcherGenerator getNextGenerator() {
             throw new IllegalStateException("Unrecognized stage: " + stage);
     }
 }
-ResourceCacheGenerator 应该是磁盘缓存RESOURCE
-DataCacheGenerator 磁盘缓存DATA
+ResourceCacheGenerator 处理过的缓存（解码+变换后）
+DataCacheGenerator 原始数据缓存（未处理）
 SourceGenerator 从网络获取数据
 
 当设置了DiskCacheStrategy.RESOURCE时，首先会从ResourceCacheGenerator查找缓存
