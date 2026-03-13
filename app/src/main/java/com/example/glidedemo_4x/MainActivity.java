@@ -17,6 +17,7 @@ import com.example.glidedemo_4x.test1.TestActivity1;
 import com.example.glidedemo_4x.test2.TestActivity2;
 import com.example.glidedemo_4x.test4.TestActivity4;
 import com.example.glidedemo_4x.test5.TestActivity5;
+import com.example.glidedemo_4x.test6.TestActivity6;
 import com.example.glidedemo_4x.webp.WebpActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onTest5(View v) {
         startActivity(new Intent(this, TestActivity5.class));
+    }
+
+    /**
+     * Glide自定义解码器加载PAG文件
+     */
+    public void onTest6(View v) {
+        startActivity(new Intent(this, TestActivity6.class));
     }
 
 }
