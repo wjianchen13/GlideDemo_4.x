@@ -11,8 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.webp.decoder.WebpDecoder;
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable;
+//import com.bumptech.glide.integration.webp.decoder.WebpDecoder;
+//import com.bumptech.glide.integration.webp.decoder.WebpDrawable;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
@@ -78,64 +78,64 @@ public class CoreUtils {
 
             @Override
             public boolean onResourceReady(@NonNull Drawable res, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
-                if (res instanceof WebpDrawable) {
-                    WebpDrawable resource = (WebpDrawable)res;
-//                        if(resId != 0)
-                    modifyDuration(resource);
-                    resource.setLoopCount(times);
-                    Animatable2Compat.AnimationCallback a = new Animatable2Compat.AnimationCallback() {
-
-                        @Override
-                        public void onAnimationStart(Drawable drawable) {
-                            super.onAnimationStart(drawable);
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Drawable drawable) {
-                            super.onAnimationEnd(drawable);
-                            System.out.println("===========================> onAnimationEnd");
-                            try {
-                                if (drawable != null && drawable instanceof WebpDrawable) {
-                                    WebpDrawable webpDrawable = (WebpDrawable) drawable;
-                                    if (!webpDrawable.isRunning()) {
-                                        webpDrawable.startFromFirstFrame();
-                                        webpDrawable.stop();
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-//                            if(svgaImageView != null) {
-//                                svgaImageView.setVisibility(View.GONE);
+//                if (res instanceof WebpDrawable) {
+//                    WebpDrawable resource = (WebpDrawable)res;
+////                        if(resId != 0)
+//                    modifyDuration(resource);
+//                    resource.setLoopCount(times);
+//                    Animatable2Compat.AnimationCallback a = new Animatable2Compat.AnimationCallback() {
+//
+//                        @Override
+//                        public void onAnimationStart(Drawable drawable) {
+//                            super.onAnimationStart(drawable);
+//
+//                        }
+//
+//                        @Override
+//                        public void onAnimationEnd(Drawable drawable) {
+//                            super.onAnimationEnd(drawable);
+//                            System.out.println("===========================> onAnimationEnd");
+//                            try {
+//                                if (drawable != null && drawable instanceof WebpDrawable) {
+//                                    WebpDrawable webpDrawable = (WebpDrawable) drawable;
+//                                    if (!webpDrawable.isRunning()) {
+//                                        webpDrawable.startFromFirstFrame();
+//                                        webpDrawable.stop();
+//                                    }
+//                                }
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
 //                            }
-                            if(callBack != null) {
-                                callBack.onPlayEnd(1);
-                            }
-                        }
-                    };
-                    resource.clearAnimationCallbacks();
-                    // 在动画播放完成后的监听
-                    resource.registerAnimationCallback(a);
-                    if(svgaImageView != null) {
-                        svgaImageView.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                svgaImageView.setVisibility(View.VISIBLE);
-                            }
-                        }, 10);
-
-                    }
-                    if(callBack != null) {
-                        callBack.onPlayStart(version);
-                    }
-                    resource.startFromFirstFrame();
-                    return false;
-                } else {
-                    if(callBack != null) {
-                        callBack.onPlayEnd(1);
-                    }
-                }
+////                            if(svgaImageView != null) {
+////                                svgaImageView.setVisibility(View.GONE);
+////                            }
+//                            if(callBack != null) {
+//                                callBack.onPlayEnd(1);
+//                            }
+//                        }
+//                    };
+//                    resource.clearAnimationCallbacks();
+//                    // 在动画播放完成后的监听
+//                    resource.registerAnimationCallback(a);
+//                    if(svgaImageView != null) {
+//                        svgaImageView.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                svgaImageView.setVisibility(View.VISIBLE);
+//                            }
+//                        }, 10);
+//
+//                    }
+//                    if(callBack != null) {
+//                        callBack.onPlayStart(version);
+//                    }
+//                    resource.startFromFirstFrame();
+//                    return false;
+//                } else {
+//                    if(callBack != null) {
+//                        callBack.onPlayEnd(1);
+//                    }
+//                }
 
                 return false;
             }
@@ -155,37 +155,37 @@ public class CoreUtils {
     }
 
     public static void modifyDuration(Drawable res) {
-        if(res == null || !(res instanceof WebpDrawable))
-            return ;
-        try {
-            //已知三方库的bug，webp的动图每一帧的时间间隔于实际的有所偏差，需要反射三方库去修改
-            //https://github.com/zjupure/GlideWebpDecoder/issues/33
-            Field gifStateField = ((WebpDrawable)res).getClass().getDeclaredField("state");
-            gifStateField.setAccessible(true);//开放权限
-            Class gifStateClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpDrawable$WebpState");
-            Field gifFrameLoaderField = gifStateClass.getDeclaredField("frameLoader");
-            gifFrameLoaderField.setAccessible(true);
-
-            Class gifFrameLoaderClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpFrameLoader");
-            Field gifDecoderField = gifFrameLoaderClass.getDeclaredField("webpDecoder");
-            gifDecoderField.setAccessible(true);
-
-            WebpDecoder webpDecoder = (WebpDecoder) gifDecoderField.get(gifFrameLoaderField.get(gifStateField.get(res)));
-            Field durations = webpDecoder.getClass().getDeclaredField("mFrameDurations");
-            durations.setAccessible(true);
-            int[] args = (int[]) durations.get(webpDecoder);
-            if (args.length > 0) {
-                for (int i = 0; i < args.length; i++) {
-                    if (args[i] > 30) {
-                        //加载glide会比ios慢 这边把gif的间隔减少15s
-                        args[i] = args[i] - 10;
-                    }
-                }
-            }
-            durations.set(webpDecoder, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        if(res == null || !(res instanceof WebpDrawable))
+//            return ;
+//        try {
+//            //已知三方库的bug，webp的动图每一帧的时间间隔于实际的有所偏差，需要反射三方库去修改
+//            //https://github.com/zjupure/GlideWebpDecoder/issues/33
+//            Field gifStateField = ((WebpDrawable)res).getClass().getDeclaredField("state");
+//            gifStateField.setAccessible(true);//开放权限
+//            Class gifStateClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpDrawable$WebpState");
+//            Field gifFrameLoaderField = gifStateClass.getDeclaredField("frameLoader");
+//            gifFrameLoaderField.setAccessible(true);
+//
+//            Class gifFrameLoaderClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpFrameLoader");
+//            Field gifDecoderField = gifFrameLoaderClass.getDeclaredField("webpDecoder");
+//            gifDecoderField.setAccessible(true);
+//
+//            WebpDecoder webpDecoder = (WebpDecoder) gifDecoderField.get(gifFrameLoaderField.get(gifStateField.get(res)));
+//            Field durations = webpDecoder.getClass().getDeclaredField("mFrameDurations");
+//            durations.setAccessible(true);
+//            int[] args = (int[]) durations.get(webpDecoder);
+//            if (args.length > 0) {
+//                for (int i = 0; i < args.length; i++) {
+//                    if (args[i] > 30) {
+//                        //加载glide会比ios慢 这边把gif的间隔减少15s
+//                        args[i] = args[i] - 10;
+//                    }
+//                }
+//            }
+//            durations.set(webpDecoder, args);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
 

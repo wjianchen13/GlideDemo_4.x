@@ -41,7 +41,7 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.13.2") // Glide 编译器依赖
     // libpag
     implementation("com.tencent.tav:libpag:4.5.27")
-    implementation("com.github.zjupure:webpdecoder:2.0.4.13.2")
+//    implementation("com.github.zjupure:webpdecoder:2.0.4.13.2")
     // SVGAPlayer
 //    implementation("com.github.yyued:SVGAPlayer-Android:2.6.1")
 
