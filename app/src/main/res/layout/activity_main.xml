@@ -69,4 +69,13 @@
         android:text="Glide加载PAG文件"
         android:onClick="onTest6"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textAllCaps="false"
+        android:text="加载Drawable"
+        android:onClick="onTest7"/>
+
 </LinearLayout>
