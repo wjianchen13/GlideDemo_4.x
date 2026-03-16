@@ -19,6 +19,7 @@ import com.example.glidedemo_4x.test4.TestActivity4;
 import com.example.glidedemo_4x.test5.TestActivity5;
 import com.example.glidedemo_4x.test6.TestActivity6;
 import com.example.glidedemo_4x.test7.TestActivity7;
+import com.example.glidedemo_4x.test8.TestActivity8;
 import com.example.glidedemo_4x.webp.WebpActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
      */
     public void onTest7(View v) {
         startActivity(new Intent(this, TestActivity7.class));
+    }
+
+    /**
+     * 加载Drawable
+     */
+    public void onTest8(View v) {
+        startActivity(new Intent(this, TestActivity8.class));
     }
 
 }
