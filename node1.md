@@ -273,6 +273,28 @@ transcoderRegistry保存的数据
 
 
 
+完整数据流
+网络URL (Model)
+↓ ① ModelLoaderRegistry        上游
+原始数据流 (Data: InputStream)
+↓ ② DataRewinderRegistry       中间件
+↓ ③ DecoderRegistry            中间
+解码后资源 (Resource: Bitmap)
+↓ ④ TranscoderRegistry         下游
+最终资源 (Transcode: BitmapDrawable)
+↓ 显示到 ImageView
+
+⑤ EncoderRegistry              旁路（缓存写入原始数据）
+⑥ ResourceEncoderRegistry      旁路（缓存写入解码后资源）
+
+逐个解释
+#	Registry	作用	例子
+①	ModelLoaderRegistry	Model → Data，把"要加载什么"变成"原始数据"	URL → InputStream
+②	DataRewinderRegistry	给 Data 提供回退能力，不改变数据类型	InputStream 可以 rewind 回起点
+③	DecoderRegistry	Data → Resource，把原始数据解码成资源	InputStream → Bitmap
+④	TranscoderRegistry	Resource → Transcode，把资源转成最终类型	Bitmap → BitmapDrawable
+⑤	EncoderRegistry	把原始数据写入磁盘缓存	InputStream → 缓存文件 (DataCache)
+⑥	ResourceEncoderRegistry	把解码后的资源写入磁盘缓存	Bitmap → 缓存文件 (ResourceCache)
 
 
 
@@ -303,8 +325,6 @@ transcoderRegistry保存的数据
 
 
 
-
-registry.append(Registry.BUCKET_BITMAP, InputStream.class, Bitmap.class, StreamBitmapDecoder);
 
 
 

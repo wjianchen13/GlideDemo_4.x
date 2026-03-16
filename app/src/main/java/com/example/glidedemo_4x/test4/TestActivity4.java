@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.glidedemo_4x.R;
 import com.example.glidedemo_4x.Utils;
 
@@ -39,6 +40,8 @@ public class TestActivity4 extends AppCompatActivity {
         Glide.with(this)
                 .as(PAGFile.class)
                 .load(mPagUrl)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)  // 加上这个
+                .skipMemoryCache(true)
                 .into(new PAGViewTarget(pagView));
     }
 

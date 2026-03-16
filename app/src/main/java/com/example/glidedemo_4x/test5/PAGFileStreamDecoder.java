@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.ResourceDecoder;
 import com.bumptech.glide.load.engine.Resource;
-import com.bumptech.glide.load.resource.SimpleResource;
+import com.example.glidedemo_4x.PAGFileResource;
 
 import org.libpag.PAGFile;
 
@@ -42,6 +42,6 @@ public class PAGFileStreamDecoder implements ResourceDecoder<InputStream, PAGFil
         if (pagFile == null) {
             throw new IOException("Failed to decode PAG file");
         }
-        return new SimpleResource<>(pagFile);
+        return new PAGFileResource(pagFile, bytes.length);
     }
 }

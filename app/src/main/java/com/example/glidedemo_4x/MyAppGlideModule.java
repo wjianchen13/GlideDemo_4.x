@@ -20,12 +20,18 @@ import java.nio.ByteBuffer;
 public class MyAppGlideModule extends AppGlideModule {
   @Override
   public void registerComponents(Context context, Glide glide, Registry registry) {
+    // test2
     registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
+
     // test4: 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
     registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder());
-    // test5: 注册 PAG ModelLoader（ModelLoader 方式）：GlideUrl -> InputStream
-    registry.prepend(GlideUrl.class, InputStream.class, new PAGModelLoaderFactory());
-    // test5: 注册 PAGFile 解码器：InputStream -> PAGFile
-    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder());
+
+//    // test5: 注册 PAG ModelLoader（ModelLoader 方式）：GlideUrl -> InputStream
+//    registry.prepend(GlideUrl.class, InputStream.class, new PAGModelLoaderFactory());
+//    // test5: 注册 PAGFile 解码器：InputStream -> PAGFile
+//    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder());
+
+      // test6: 注册 PAGFile 解码器（InputStream 方式）：InputStream -> PAGFile
+//    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder2());
   }
 }
