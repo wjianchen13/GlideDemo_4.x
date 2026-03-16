@@ -1,42 +1,67 @@
 package com.example.glidedemo_4x.test9;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.glidedemo_4x.R;
-import com.example.glidedemo_4x.Utils;
 
+import org.libpag.PAGView;
+
+/**
+ * 加载Pag添加转码
+ */
 public class TestActivity9 extends AppCompatActivity {
 
-    private String mUrl = "https://img.ayomet.com/upload/room_img/2024-09-17/100691807_1726566456098.jpeg?imageView2/0/w/160/h/160";
-    private String mUrl1 = "https://img.ayomet.com/upload/banner/2024-11-01/db167314bff9f82f722de2c1aeb39162.jpg";
-    private ImageView imgvTest;
+    private String mPagUrl = "https://pag.io/file/like.pag";
+
+    private PAGView pagView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test8);
-        imgvTest = findViewById(R.id.imgv_test);
+        setContentView(R.layout.activity_test9);
+        pagView = findViewById(R.id.pag_view);
     }
-
 
     public void onTest1(View v) {
-        Utils.log("MainActivity onTest1");
-//        Glide.with(this).load(mUrl).into(imgvTest);
         Glide.with(this)
-//                .asBitmap()
-                .load(mUrl1)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                .into(imgvTest);
+                .as(PagData.class)    // transcodeClass = PagData.class
+                .load(mPagUrl)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)  // 加上这个
+                .into(new CustomTarget<PagData>() {
+                    @Override
+                    public void onResourceReady(@NonNull PagData pagData, @Nullable Transition<? super PagData> transition) {
+                        if (pagView != null && pagData.pagFile != null) {
+                            pagView.setComposition(pagData.pagFile);
+                            pagView.setRepeatCount(0);
+                            pagView.play();
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        if (pagView != null) {
+                            pagView.stop();
+                            pagView.setComposition(null);
+                        }
+                    }
+                });
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (pagView != null) {
+            pagView.freeCache();
+        }
+    }
 }

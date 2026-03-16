@@ -10,6 +10,10 @@ import com.example.glidedemo_4x.test2.Base64ModelLoaderFactory;
 import com.example.glidedemo_4x.test4.PAGFileResourceDecoder;
 import com.example.glidedemo_4x.test5.PAGFileStreamDecoder;
 import com.example.glidedemo_4x.test5.PAGModelLoaderFactory;
+import com.example.glidedemo_4x.test9.PAGFileResourceDecoder9;
+import com.example.glidedemo_4x.test9.PAGFileStreamDecoder9;
+import com.example.glidedemo_4x.test9.PAGFileToPagDataTranscoder9;
+import com.example.glidedemo_4x.test9.PagData;
 
 import org.libpag.PAGFile;
 
@@ -33,5 +37,18 @@ public class MyAppGlideModule extends AppGlideModule {
 
       // test6: 注册 PAGFile 解码器（InputStream 方式）：InputStream -> PAGFile
 //    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder2());
+
+    // test9
+    // 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
+    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder9());
+
+    // 注册 PAGFile 解码器：InputStream -> PAGFile
+    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder9());
+
+    // 注册转码器：PAGFile → PagData
+    registry.register(PAGFile.class, PagData.class, new PAGFileToPagDataTranscoder9());
+
   }
+
+
 }
