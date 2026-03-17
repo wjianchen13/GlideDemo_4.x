@@ -1,11 +1,16 @@
 package com.example.glidedemo_4x.test9;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.glidedemo_4x.R;
 
 import org.libpag.PAGView;
@@ -44,6 +49,43 @@ public class TestActivity9 extends AppCompatActivity {
                 .as(PagData.class)
                 .load(mPagUrl)
                 .into(new PagDataViewTarget(pagView));
+    }
+
+    /**
+     * 重复点击时能正确取消旧请求。
+     * @param v
+     */
+    public void onTest2(View v) {
+        CustomTarget target = new CustomTarget<PagData>() {
+            @Override
+            public void onResourceReady(@NonNull PagData pagData, @Nullable Transition<? super PagData> transition) {
+                if (pagView != null && pagData.pagFile != null) {
+                    pagView.setComposition(pagData.pagFile);
+                    pagView.setRepeatCount(0);
+                    pagView.play();
+                }
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+                if (pagView != null) {
+                    pagView.stop();
+                    pagView.setComposition(null);
+                }
+            }
+        };
+        Object tag = v.getTag();
+        if(tag != null && tag instanceof CustomTarget) {
+            Glide.with(this).clear((CustomTarget) tag);
+        }
+
+        Glide.with(this)
+                .as(PagData.class)    // transcodeClass = PagData.class
+                .load(mPagUrl)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)  // 加上这个
+                .into(target);
+        v.setTag(target);
+
     }
 
     @Override
