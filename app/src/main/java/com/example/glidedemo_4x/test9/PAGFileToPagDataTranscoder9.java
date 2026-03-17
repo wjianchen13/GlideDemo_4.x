@@ -18,12 +18,7 @@ public class PAGFileToPagDataTranscoder9 implements ResourceTranscoder<PAGFile, 
     @Nullable
     @Override
     public Resource<PagData> transcode(@NonNull Resource<PAGFile> toTranscode, @NonNull Options options) {
-        PAGFile pagFile = toTranscode.get();
-        int size = toTranscode.getSize();
-
-        PagData pagData = new PagData();
-        pagData.pagFile = pagFile;
-
-        return new PagDataResource(pagData, size);
+        // 把原始 Resource 传进去，由 PagDataResource 负责管理生命周期
+        return new PagDataResource(toTranscode);
     }
 }
