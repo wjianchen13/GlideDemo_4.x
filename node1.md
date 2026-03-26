@@ -194,6 +194,7 @@ decodePaths -> List<DecodePath<Data, TResource, Transcode>>
 
 
 modelLoaderRegistry保存的数据，按照顺序
+.append(modelClass, dataClass, ModelLoader)
 .append(Bitmap.class, Bitmap.class, UnitModelLoader.Factory.<Bitmap>getInstance())
 .append(GifDecoder.class, GifDecoder.class, UnitModelLoader.Factory.<GifDecoder>getInstance())
 .append(File.class, ByteBuffer.class, new ByteBufferFileLoader.Factory())
@@ -238,6 +239,8 @@ Animation
 Bitmap
 BitmapDrawable
 legacy_append
+
+public <Data, TResource> Registry append(dataClass, resourceClass, decoder) {
 
 registry.append(Registry.BUCKET_ANIMATION, InputStream.class, GifDrawable.class, new StreamGifDecoder(imageHeaderParsers, byteBufferGifDecoder, arrayPool))
 registry.append(Registry.BUCKET_ANIMATION, ByteBuffer.class, GifDrawable.class, byteBufferGifDecoder)

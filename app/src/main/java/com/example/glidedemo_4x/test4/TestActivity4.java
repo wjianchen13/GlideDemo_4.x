@@ -41,7 +41,7 @@ public class TestActivity4 extends AppCompatActivity {
                 .as(PAGFile.class)
                 .load(mPagUrl)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)  // 加上这个
-                .skipMemoryCache(true)
+//                .skipMemoryCache(true)
                 .into(new PAGViewTarget(pagView));
     }
 

@@ -25,10 +25,10 @@ public class MyAppGlideModule extends AppGlideModule {
   @Override
   public void registerComponents(Context context, Glide glide, Registry registry) {
     // test2
-    registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
-
-    // test4: 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
-    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder());
+//    registry.prepend(String.class, ByteBuffer.class, new Base64ModelLoaderFactory());
+//
+//    // test4: 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
+//    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder());
 
 //    // test5: 注册 PAG ModelLoader（ModelLoader 方式）：GlideUrl -> InputStream
 //    registry.prepend(GlideUrl.class, InputStream.class, new PAGModelLoaderFactory());
@@ -39,14 +39,14 @@ public class MyAppGlideModule extends AppGlideModule {
 //    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder2());
 
     // test9
-    // 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
-    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder9());
-
-    // 注册 PAGFile 解码器：InputStream -> PAGFile
-    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder9());
-
-    // 注册转码器：PAGFile → PagData
-    registry.register(PAGFile.class, PagData.class, new PAGFileToPagDataTranscoder9());
+//    // 注册 PAGFile 解码器（ResourceDecoder 方式）：ByteBuffer -> PAGFile
+//    registry.prepend(ByteBuffer.class, PAGFile.class, new PAGFileResourceDecoder9());
+//
+//    // 注册 PAGFile 解码器：InputStream -> PAGFile
+//    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder9());
+//
+//    // 注册转码器：PAGFile → PagData
+//    registry.register(PAGFile.class, PagData.class, new PAGFileToPagDataTranscoder9());
 
   }
 

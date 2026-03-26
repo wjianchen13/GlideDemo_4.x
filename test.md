@@ -626,23 +626,124 @@ SingleRequest
 而com.example.glidedemo_4x.test5.PAGFileStreamDecoder的类型却是<InputStream, PAGFile> 
 
 
+ResourceCacheGenerator有下面的方法：
+public boolean startNext() {
+GlideTrace.beginSection("ResourceCacheGenerator.startNext");
+try {
+List<Key> sourceIds = helper.getCacheKeys();
+if (sourceIds.isEmpty()) {
+return false;
+}
+List<Class<?>> resourceClasses = helper.getRegisteredResourceClasses();
+if (resourceClasses.isEmpty()) {
+if (File.class.equals(helper.getTranscodeClass())) {
+return false;
+}
+throw new IllegalStateException(
+"Failed to find any load path from "
++ helper.getModelClass()
++ " to "
++ helper.getTranscodeClass());
+}
+while (modelLoaders == null || !hasNextModelLoader()) {
+resourceClassIndex++;
+if (resourceClassIndex >= resourceClasses.size()) {
+sourceIdIndex++;
+if (sourceIdIndex >= sourceIds.size()) {
+return false;
+}
+resourceClassIndex = 0;
+}
+
+        Key sourceId = sourceIds.get(sourceIdIndex);
+        Class<?> resourceClass = resourceClasses.get(resourceClassIndex);
+        Transformation<?> transformation = helper.getTransformation(resourceClass);
+        // PMD.AvoidInstantiatingObjectsInLoops Each iteration is comparatively expensive anyway,
+        // we only run until the first one succeeds, the loop runs for only a limited
+        // number of iterations on the order of 10-20 in the worst case.
+        currentKey =
+            new ResourceCacheKey( // NOPMD AvoidInstantiatingObjectsInLoops
+                helper.getArrayPool(),
+                sourceId,
+                helper.getSignature(),
+                helper.getWidth(),
+                helper.getHeight(),
+                transformation,
+                resourceClass,
+                helper.getOptions());
+        cacheFile = helper.getDiskCache().get(currentKey);
+        if (cacheFile != null) {
+          sourceKey = sourceId;
+          modelLoaders = helper.getModelLoaders(cacheFile);
+          modelLoaderIndex = 0;
+        }
+      }
+
+      loadData = null;
+      boolean started = false;
+      while (!started && hasNextModelLoader()) {
+        ModelLoader<File, ?> modelLoader = modelLoaders.get(modelLoaderIndex++);
+        loadData =
+            modelLoader.buildLoadData(
+                cacheFile, helper.getWidth(), helper.getHeight(), helper.getOptions());
+        if (loadData != null && helper.hasLoadPath(loadData.fetcher.getDataClass())) {
+          started = true;
+          loadData.fetcher.loadData(helper.getPriority(), this);
+        }
+      }
+
+      return started;
+    } finally {
+      GlideTrace.endSection();
+    }
+}
+在前面已经获取了cacheFile了： 
+cacheFile = helper.getDiskCache().get(currentKey);
+为什么后面还需要
+调用这个：
+  loadData.fetcher.loadData(helper.getPriority(), this);
+
+
+下面这段代码：
+boolean started = false;
+while (!started && hasNextModelLoader()) {
+ModelLoader<File, ?> modelLoader = modelLoaders.get(modelLoaderIndex++);
+loadData =
+modelLoader.buildLoadData(
+cacheFile, helper.getWidth(), helper.getHeight(), helper.getOptions());
+if (loadData != null && helper.hasLoadPath(loadData.fetcher.getDataClass())) {
+started = true;
+loadData.fetcher.loadData(helper.getPriority(), this);
+}
+}
+
+      return started;
+为什么要加一个started标记？
+
+dataClass = ByteBuffer
+resourceClass = GifDrawable
+transcodeClass = Drawable
+
+
+我看到如果设置DiskCacheStrategy.RESOURCE，如果在本地找到缓存的时候，它也会回调到DecodeJob的onDataFetcherReady()方法
+然后从网络加载数据也会调用onDataFetcherReady()方法，它是怎么区分数据从网络加载，还是从磁盘加载的，如果是从磁盘加载，调用
+decodeFromRetrievedData()这个方法，后面还是会重新解码，然后转换，变换，把缓存重新生成，再次设置缓存吗？
+
+
+这两个有什么区别：
+java.nio.DirectByteBuffer
+java.nio.ByteBuffer
+我看到从ByteBufferFileLoader生成的数据类型是java.nio.DirectByteBuffer
+
+我在代码中经常看到的都是：resourceClass = class java.lang.Object
+表示不限定解码的类型，什么时候需要限定解码的类型？
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+如果设置了DiskCacheStrategy.RESOURCE，解码资源的时候
+还会这行这3步吗
+Resource<ResourceType> decoded = decodeResource(rewinder, width, height, options);
+Resource<ResourceType> transformed = callback.onResourceDecoded(decoded);
+return transcoder.transcode(transformed, options);
 
 
