@@ -746,4 +746,43 @@ Resource<ResourceType> decoded = decodeResource(rewinder, width, height, options
 Resource<ResourceType> transformed = callback.onResourceDecoded(decoded);
 return transcoder.transcode(transformed, options);
 
+请问下下面2个解码器有什么区别，为什么要有区别ByteBuffer和InputStream
+public class PAGFileResourceDecoder9 implements ResourceDecoder<ByteBuffer, PAGFile>
+public class PAGFileStreamDecoder9 implements ResourceDecoder<InputStream, PAGFile> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

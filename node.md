@@ -1204,6 +1204,7 @@ Fragment有可能会被销毁，这样做可以及时清除缓存并释放内存
 读取缓存的顺序是：正在使用的图片缓存 > 内存缓存 > 磁盘缓存
 缓存正在使用的图片采取HashMap+弱引用，而内存缓存使用LinkedHashMap
 
+
 缓存写入
 是在DecodeJob的decodeFromRetrievedData()方法开始
 最后回调到Engine中的第371行的onEngineJobComplete()方法

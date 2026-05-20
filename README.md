@@ -11,6 +11,16 @@ Glide.getRetriever()
 
 
 
+.append(String.class, ParcelFileDescriptor.class, new StringLoader.FileDescriptorFactory())
+.append(String.class, AssetFileDescriptor.class, new StringLoader.AssetFileDescriptorFactory())
+
+
+
+
+
+.append(Uri.class,ParcelFileDescriptor.class,new QMediaStoreUriLoader.FileDescriptorFactory(context));
+.append(Uri.class,ParcelFileDescriptor.class,new UriLoader.FileDescriptorFactory(contentResolver))
+
 
 
 
