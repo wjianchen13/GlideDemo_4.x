@@ -32,7 +32,7 @@ public class TestActivity1 extends AppCompatActivity {
         Glide.with(this)
 //                .asBitmap()
                 .load(mUrl1)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .skipMemoryCache(true)
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                 .into(imgvTest);
