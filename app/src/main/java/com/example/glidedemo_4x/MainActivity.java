@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.manager.RequestManagerRetriever;
 import com.bumptech.glide.request.target.Target;
 import com.example.glidedemo_4x.test1.TestActivity1;
+import com.example.glidedemo_4x.test10.TestActivity10;
 import com.example.glidedemo_4x.test2.TestActivity2;
 import com.example.glidedemo_4x.test4.TestActivity4;
 import com.example.glidedemo_4x.test5.TestActivity5;
@@ -95,5 +96,13 @@ public class MainActivity extends AppCompatActivity {
     public void onTest9(View v) {
         startActivity(new Intent(this, TestActivity9.class));
     }
+
+    /**
+     * 插件编写测试
+     */
+    public void onTest10(View v) {
+        startActivity(new Intent(this, TestActivity10.class));
+    }
+
 
 }
