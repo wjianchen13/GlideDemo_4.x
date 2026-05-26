@@ -6,6 +6,8 @@ import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.load.model.GlideUrl;
+import com.example.glidedemo_4x.test10.PAGFileStreamDecoder10;
+import com.example.glidedemo_4x.test10.PAGFileViewTarget10;
 import com.example.glidedemo_4x.test2.Base64ModelLoaderFactory;
 import com.example.glidedemo_4x.test4.PAGFileResourceDecoder;
 import com.example.glidedemo_4x.test5.PAGFileStreamDecoder;
@@ -47,6 +49,9 @@ public class MyAppGlideModule extends AppGlideModule {
 //
 //    // 注册转码器：PAGFile → PagData
 //    registry.register(PAGFile.class, PagData.class, new PAGFileToPagDataTranscoder9());
+
+    registry.prepend(InputStream.class, PAGFile.class, new PAGFileStreamDecoder10());
+
 
   }
 
