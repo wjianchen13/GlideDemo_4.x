@@ -41,7 +41,7 @@ public class PAGFileStreamDecoder10 implements ResourceDecoder<InputStream, PAGF
         }
         PAGFile pagFile = PAGFile.Load(bytes);
         if(pagFile == null) {
-            throw new IOException("Filed to decode PAG File");
+            throw new IOException("Failed to decode PAG File");
         }
         return new PAGFileResource10(pagFile, bytes.length);
     }

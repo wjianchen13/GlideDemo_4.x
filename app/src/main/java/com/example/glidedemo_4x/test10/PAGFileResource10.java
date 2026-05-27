@@ -25,6 +25,8 @@ public class PAGFileResource10 implements Resource<PAGFile> {
     @NonNull
     @Override
     public PAGFile get() {
+        if (pagFile == null)
+            throw new IllegalStateException("Resource already recycled");
         return pagFile;
     }
 

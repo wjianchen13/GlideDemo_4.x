@@ -27,7 +27,7 @@ public class PAGFileViewTarget10 extends CustomViewTarget<PAGView, PAGFile> {
         this(view, null);
     }
 
-    public PAGFileViewTarget10(@NonNull PAGView view, @NonNull OnPagFileReadyListener listener) {
+    public PAGFileViewTarget10(@NonNull PAGView view,  OnPagFileReadyListener listener) {
         super(view);
         this.listener = listener;
     }

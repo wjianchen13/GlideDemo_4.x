@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.example.glidedemo_4x.test9.PagDataViewTarget;
 
 import org.libpag.PAGFile;
 import org.libpag.PAGView;
@@ -22,13 +21,13 @@ public class PAGDataViewTarget10 extends CustomViewTarget<PAGView, PAGData10> {
         void onReady(PAGFile pagFile);
     }
 
-    private final PagDataViewTarget.OnPagFileReadyListener listener;
+    private final OnPagFileReadyListener listener;
 
     public PAGDataViewTarget10(@NonNull PAGView view) {
         this(view, null);
     }
 
-    public PAGDataViewTarget10(@NonNull PAGView view, @Nullable PagDataViewTarget.OnPagFileReadyListener listener) {
+    public PAGDataViewTarget10(@NonNull PAGView view, @Nullable OnPagFileReadyListener listener) {
         super(view);
         this.listener = listener;
     }

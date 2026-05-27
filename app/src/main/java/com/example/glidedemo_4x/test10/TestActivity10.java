@@ -127,6 +127,9 @@ public class TestActivity10 extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        if (pagView != null) {
+            pagView.stop();
+            pagView.freeCache();
+        }
     }
 }
