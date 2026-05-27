@@ -46,11 +46,9 @@ public class TestActivity10 extends AppCompatActivity {
         CustomTarget target = new CustomTarget<PAGFile>() {
             @Override
             public void onResourceReady(@NonNull PAGFile pagFile, @Nullable Transition<? super PAGFile> transition) {
-                if (pagView != null && pagFile != null) {
-                    pagView.setComposition(pagFile);
-                    pagView.setRepeatCount(0);
-                    pagView.play();
-                }
+                pagView.setComposition(pagFile);
+                pagView.setRepeatCount(0);
+                pagView.play();
             }
 
             @Override
@@ -94,11 +92,9 @@ public class TestActivity10 extends AppCompatActivity {
         CustomTarget target = new CustomTarget<PAGData10>() {
             @Override
             public void onResourceReady(@NonNull PAGData10 pagData, @Nullable Transition<? super PAGData10> transition) {
-                if (pagView != null && pagData.pagFile != null) {
-                    pagView.setComposition(pagData.pagFile);
-                    pagView.setRepeatCount(0);
-                    pagView.play();
-                }
+                pagView.setComposition(pagData.pagFile);
+                pagView.setRepeatCount(0);
+                pagView.play();
             }
 
             @Override
