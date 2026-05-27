@@ -12,8 +12,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.glidedemo_4x.R;
-import com.example.glidedemo_4x.test9.PagData;
-import com.example.glidedemo_4x.test9.PagDataViewTarget;
 
 import org.libpag.PAGFile;
 import org.libpag.PAGView;
